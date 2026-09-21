@@ -1,5 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
+
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -10,8 +12,9 @@ const firebaseConfig = {
   projectId: "smart-deals-23aaf",
   storageBucket: "smart-deals-23aaf.firebasestorage.app",
   messagingSenderId: "654947676357",
-  appId: "1:654947676357:web:21bcd43fc6a36d406fc0ac"
+  appId: "1:654947676357:web:21bcd43fc6a36d406fc0ac",
 };
 
 // Initialize Firebase
-export const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
