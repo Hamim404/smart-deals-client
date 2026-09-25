@@ -8,6 +8,8 @@ import Login from "./pages/Login/Login";
 import Home from "./pages/Home/Home";
 import Register from "./pages/Register/Register";
 import AuthProvider from "./contexts/AuthProvider";
+import ProductDetails from "./pages/ProductDetails/ProductDetails";
+import MyBid from "./pages/MyBid/MyBid";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +19,7 @@ const router = createBrowserRouter([
       {
         index: true,
         Component: Home,
+        loader: () => fetch("http://localhost:5000/latest-products"),
       },
       {
         path: "/register",
@@ -25,6 +28,16 @@ const router = createBrowserRouter([
       {
         path: "/login",
         Component: Login,
+      },
+      {
+        path: "product/:id",
+        loader: ({ params }) =>
+          fetch(`http://localhost:5000/products/${params.id}`),
+        Component: ProductDetails,
+      },
+      {
+        path: "/myBid",
+        Component: MyBid,
       },
     ],
   },
