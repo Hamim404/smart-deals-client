@@ -1,4 +1,30 @@
+import { use, useEffect, useState } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
+
 const MyBid = () => {
+  const { user } = use(AuthContext);
+  const currentEmail = user?.email;
+  const [bidList, setBidList] = useState([]);
+  useEffect(() => {
+    fetch(`http://localhost:5000/bids?email=${currentEmail}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setBidList(data);
+      });
+  }, [currentEmail]);
+
+  const handleDeleteBid = (id) => {
+    fetch(`http://localhost:5000/bids/${id}`, {
+      method: "DELETE",
+    })
+      .then((res) => res.json())
+      .then(() => {
+        console.log(bidList);
+        const remainingBidList = bidList.filter((bid) => bid._id !== id);
+        setBidList(remainingBidList);
+      });
+  };
+
   return (
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex flex-col">
       {/* Header section */}
@@ -24,7 +50,7 @@ const MyBid = () => {
           {/* Table Body with exactly one design row */}
           <tbody>
             {bidList?.map((bid, index) => (
-              <tr className="border-b border-base-200">
+              <tr key={index} className="border-b border-base-200">
                 {/* SL No */}
                 <td className="font-bold text-black py-4">{index + 1}</td>
 
@@ -34,10 +60,10 @@ const MyBid = () => {
                     <div className="w-12 h-12 bg-gray-300 rounded shrink-0"></div>
                     <div>
                       <div className="font-bold text-sm text-black">
-                        {title}
+                        {bid.bid_title ? bid.bid_title : "Null"}
                       </div>
                       <div className="text-xs text-gray-500">
-                        ${price_min} - ${price_max}
+                        ${bid.price_min} - ${bid.price_max}
                       </div>
                     </div>
                   </div>
@@ -46,7 +72,7 @@ const MyBid = () => {
                 {/* Seller Column */}
                 <td className="py-4">
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-300 flex-shrink-0"></div>
+                    <div className="w-8 h-8 rounded-full bg-gray-300 shrink-0"></div>
                     <div>
                       <div className="font-bold text-sm text-black">
                         {bid.buyer_name}
@@ -65,10 +91,13 @@ const MyBid = () => {
                 <td className="py-4">
                   <div className="flex gap-2">
                     <button className="btn btn-outline btn-success btn-xs capitalize font-normal px-3 rounded">
-                      Accept Offer
+                      Accept Bid
                     </button>
-                    <button className="btn btn-outline btn-error btn-xs capitalize font-normal px-3 rounded">
-                      Reject Offer
+                    <button
+                      onClick={() => handleDeleteBid(bid._id)}
+                      className="btn btn-outline btn-error btn-xs capitalize font-normal px-3 rounded"
+                    >
+                      Delete Bid
                     </button>
                   </div>
                 </td>
